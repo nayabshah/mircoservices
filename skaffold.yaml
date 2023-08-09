@@ -1,0 +1,28 @@
+apiVersion: skaffold/v2beta29
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+    - image: nayabshah/auth
+      context: auth
+      docker:
+        dockerfile: Dockerfile
+        noCache: true
+      sync:
+        manual:
+          - src: src/**/*.ts
+            dest: .
+    - image: nayabshah/next_client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '**/*.js'
+            dest: .
+# skaffold dev --cleanup=false
